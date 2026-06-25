@@ -1,0 +1,32 @@
+@import './fonts.css';
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #0d1117;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
