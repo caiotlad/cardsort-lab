@@ -34,9 +34,11 @@ public class DemoUserInitializer {
                 var user = new UserAccount();
                 user.setName("Pesquisador Demo");
                 user.setEmail(DEMO_EMAIL);
-                user.setPasswordHash(passwords.encode(DEMO_PASSWORD));
-                return users.save(user);
+                return user;
             });
+            demo.setName("Pesquisador Demo");
+            demo.setPasswordHash(passwords.encode(DEMO_PASSWORD));
+            demo = users.save(demo);
 
             seedDemoStudies(demo, studies, sessions, json);
         };
