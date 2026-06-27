@@ -4,6 +4,7 @@ dist
 .npm-cache
 .idea
 .git-metadata
+.tools
 .vite.pid
 .preview.pid
 *.stdout.log
