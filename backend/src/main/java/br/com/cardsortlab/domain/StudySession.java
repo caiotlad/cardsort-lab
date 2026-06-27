@@ -22,7 +22,7 @@ public class StudySession {
     private String draftJson = "{}";
     @Lob
     private String groupsJson = "[]";
-    private boolean consentAccepted;
+    private Boolean consentAccepted = false;
     @Lob
     private String profileJson = "{}";
     @Column(nullable = false)
@@ -43,7 +43,7 @@ public class StudySession {
     public void setDraftJson(String draftJson) { this.draftJson = draftJson; }
     public String getGroupsJson() { return groupsJson; }
     public void setGroupsJson(String groupsJson) { this.groupsJson = groupsJson; }
-    public boolean isConsentAccepted() { return consentAccepted; }
+    public boolean isConsentAccepted() { return Boolean.TRUE.equals(consentAccepted); }
     public void setConsentAccepted(boolean consentAccepted) { this.consentAccepted = consentAccepted; }
     public String getProfileJson() { return profileJson; }
     public void setProfileJson(String profileJson) { this.profileJson = profileJson; }

@@ -15,6 +15,7 @@ dist
 src.zip
 backend/target
 backend/data
+data
 *.mv.db
 *.lock.db
 .vercel
