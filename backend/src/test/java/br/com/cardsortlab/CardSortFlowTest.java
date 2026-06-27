@@ -11,6 +11,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -111,5 +113,27 @@ class CardSortFlowTest {
                 .andExpect(header().string("Content-Disposition", containsString("_relatorio.md")))
                 .andExpect(content().string(containsString("Relatório do estudo")))
                 .andExpect(content().string(containsString("Sessões concluídas")));
+    }
+
+    @Test
+    void demoAccountStartsWithThreeFilledStudies() throws Exception {
+        var login = mvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email":"demo@cardsort.local","password":"Demo1234"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn();
+        var cookie = login.getResponse().getCookie("cardsort_session");
+
+        mvc.perform(get("/api/studies").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(3)))
+                .andExpect(jsonPath("$[*].name").value(hasItem("[Demo] E-commerce — Card Sorting Aberto")))
+                .andExpect(jsonPath("$[*].name").value(hasItem("[Demo] App de Saúde — Card Sorting Fechado")))
+                .andExpect(jsonPath("$[*].name").value(hasItem("[Demo] Portal Acadêmico — Card Sorting Híbrido")))
+                .andExpect(jsonPath("$[?(@.name == '[Demo] E-commerce — Card Sorting Aberto')].sessions.length()").value(hasItem(9)))
+                .andExpect(jsonPath("$[?(@.name == '[Demo] App de Saúde — Card Sorting Fechado')].sessions.length()").value(hasItem(10)))
+                .andExpect(jsonPath("$[?(@.name == '[Demo] Portal Acadêmico — Card Sorting Híbrido')].sessions.length()").value(hasItem(8)));
     }
 }

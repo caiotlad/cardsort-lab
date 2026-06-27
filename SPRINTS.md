@@ -130,7 +130,7 @@ Foco: facilitar a documentação dos testes para uso acadêmico.
 
 ## Sprint 4 — Polimento de UI/UX e design
 
-Status: em andamento  
+Status: concluída  
 Início: 27/06/2026  
 Foco: reduzir sensação de protótipo e deixar a experiência mais clara para pesquisadores e participantes.
 
@@ -170,4 +170,35 @@ Foco: reduzir sensação de protótipo e deixar a experiência mais clara para p
 
 - `npm run build` passou.
 - `backend/mvnw.cmd test -q` passou.
+- Teste integrado passou a validar que a conta demo possui os três estudos preenchidos.
+
+### Validação executada
+
+- `npm run build` passou.
+- `backend/mvnw.cmd test -q` passou.
 - Foi feita revisão manual de boas práticas React após alterações em múltiplos componentes TSX.
+
+## Sprint 5 — Dados demonstrativos para apresentação
+
+Status: em andamento  
+Início: 27/06/2026  
+Foco: permitir que a conta demo mostre dashboards preenchidos sem depender de coleta real.
+
+### Objetivos
+
+- Criar três estudos demonstrativos na conta `demo@cardsort.local`.
+- Cobrir os três tipos de card sorting: aberto, fechado e híbrido.
+- Incluir 8 a 10 participantes fictícios por estudo.
+- Garantir que os dados sejam criados sem duplicar a cada reinicialização.
+
+### Mudanças implementadas
+
+- O inicializador da conta demo agora também cria estudos de exemplo quando eles ainda não existem.
+- Foram adicionados estudos demo de e-commerce, app de saúde e portal acadêmico.
+- Cada estudo contém cards, categorias quando aplicável, links/códigos próprios e sessões concluídas fictícias.
+- README documenta os exemplos disponíveis na conta demo.
+
+### Validação planejada
+
+- `npm run build`
+- `backend/mvnw.cmd test -q`

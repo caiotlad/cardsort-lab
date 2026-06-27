@@ -33,6 +33,14 @@ Senha: Demo1234
 
 Essa conta pode ser desativada em produção com `DEMO_USER_ENABLED=false`.
 
+Ao entrar com a conta demo, a aplicação cria automaticamente três estudos de exemplo:
+
+- card sorting aberto com dados de e-commerce;
+- card sorting fechado com dados de app de saúde;
+- card sorting híbrido com dados de portal acadêmico.
+
+Cada estudo vem com 8 a 10 participantes fictícios para demonstrar dashboard, matriz, dendrograma, insights e exportações.
+
 ## Testar o projeto
 
 ```powershell
