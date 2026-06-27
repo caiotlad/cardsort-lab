@@ -75,10 +75,13 @@ Pesquisadores autenticados podem exportar dados de cada estudo pelos endpoints:
 ```text
 /api/studies/{id}/exports/summary.csv
 /api/studies/{id}/exports/sessions.csv
+/api/studies/{id}/exports/sessions-anonymized.csv
 /api/studies/{id}/exports/similarity-matrix.csv
 ```
 
 Os arquivos usam CSV com separador `;` e codificação UTF-8 com BOM, o que facilita abrir no Excel em português do Brasil.
+
+A exportação anonimizada substitui nome e e-mail por códigos como `P001`, `P002`, etc., mantendo a organização das respostas sem expor dados pessoais dos participantes.
 
 ## Diário de sprints
 

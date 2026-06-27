@@ -52,3 +52,41 @@ Foco: facilitar a documentação e recuperação dos dados coletados nos testes.
 - Adicionar botões no dashboard para baixar as exportações do backend.
 - Melhorar a experiência de revisão antes do participante finalizar.
 - Criar relatório metodológico simples para apoiar a iniciação científica.
+
+## Sprint 2 — Exportação anonimizada para documentação acadêmica
+
+Status: concluída  
+Início: 27/06/2026  
+Foco: proteger dados identificáveis dos participantes ao exportar respostas para análise e documentação.
+
+### Objetivos
+
+- Criar uma exportação de sessões sem nome e e-mail dos participantes.
+- Substituir identificadores pessoais por códigos estáveis no arquivo exportado.
+- Disponibilizar a exportação anonimizada no dashboard.
+- Cobrir o endpoint com teste automatizado.
+
+### Mudanças planejadas
+
+- Novo endpoint `/api/studies/{id}/exports/sessions-anonymized.csv`.
+- Novo item no menu de exportação do dashboard.
+- Documentação no README.
+
+### Mudanças implementadas
+
+- Adicionado endpoint autenticado de sessões anonimizadas.
+- Participantes passam a aparecer como `P001`, `P002`, etc. na exportação.
+- Nome e e-mail ficam fora do arquivo anonimizado.
+- Dashboard recebeu opção “Sessões anonimizadas — CSV”.
+- README passou a documentar o novo arquivo.
+- Teste integrado valida que o arquivo contém código anônimo e não contém nome/e-mail.
+
+### Validação planejada
+
+- `npm run build`
+- `backend/mvnw.cmd test -q`
+
+### Validação executada
+
+- `npm run build` passou.
+- `backend/mvnw.cmd test -q` passou.

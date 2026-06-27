@@ -11,6 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -94,6 +95,12 @@ class CardSortFlowTest {
         mvc.perform(get("/api/studies/" + studyId + "/exports/sessions.csv").cookie(cookie))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Participante Teste")));
+
+        mvc.perform(get("/api/studies/" + studyId + "/exports/sessions-anonymized.csv").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("P001")))
+                .andExpect(content().string(not(containsString("Participante Teste"))))
+                .andExpect(content().string(not(containsString("p@teste.local"))));
 
         mvc.perform(get("/api/studies/" + studyId + "/exports/similarity-matrix.csv").cookie(cookie))
                 .andExpect(status().isOk())

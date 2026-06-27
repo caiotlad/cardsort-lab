@@ -130,6 +130,38 @@ public class StudyController {
         return csv(csv(rows), safeFileName(study.getName()) + "_sessoes.csv");
     }
 
+    @GetMapping(value = "/{id}/exports/sessions-anonymized.csv", produces = "text/csv; charset=UTF-8")
+    @Transactional(readOnly = true)
+    public ResponseEntity<String> exportAnonymizedSessions(@PathVariable String id, Authentication auth) {
+        var study = owned(id, auth);
+        var orderedSessions = completedSessions(study).stream()
+                .sorted(Comparator.comparing(StudySession::getStartedAt))
+                .toList();
+        var participantCodes = new HashMap<String, String>();
+        for (int i = 0; i < orderedSessions.size(); i++) {
+            participantCodes.put(orderedSessions.get(i).getId(), "P" + String.format("%03d", i + 1));
+        }
+
+        var rows = new ArrayList<List<String>>();
+        rows.add(List.of("Código Participante", "ID Sessão", "Data/Hora", "Tempo (s)",
+                "Nº Grupos", "Categoria", "Cards no Grupo"));
+        for (var session : orderedSessions) {
+            var sessionGroups = groups(session);
+            for (var group : sessionGroups) {
+                rows.add(List.of(
+                        participantCodes.get(session.getId()),
+                        session.getId(),
+                        session.getCompletedAt() == null ? "" : EXPORT_DATE.format(session.getCompletedAt()),
+                        String.valueOf(session.getTimeSpent() == null ? 0 : session.getTimeSpent()),
+                        String.valueOf(sessionGroups.size()),
+                        group.categoryName(),
+                        cardNames(study, group.cardIds())
+                ));
+            }
+        }
+        return csv(csv(rows), safeFileName(study.getName()) + "_sessoes_anonimizadas.csv");
+    }
+
     @GetMapping(value = "/{id}/exports/similarity-matrix.csv", produces = "text/csv; charset=UTF-8")
     @Transactional(readOnly = true)
     public ResponseEntity<String> exportSimilarityMatrix(@PathVariable String id, Authentication auth) {

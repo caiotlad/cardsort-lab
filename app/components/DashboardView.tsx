@@ -39,7 +39,7 @@ function downloadFile(content: string, filename: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
-function downloadBackendExport(studyId: string, exportName: 'summary' | 'sessions' | 'similarity-matrix') {
+function downloadBackendExport(studyId: string, exportName: 'summary' | 'sessions' | 'sessions-anonymized' | 'similarity-matrix') {
   window.location.href = `/api/studies/${encodeURIComponent(studyId)}/exports/${exportName}.csv`;
 }
 
@@ -199,6 +199,7 @@ export function DashboardView({ study: sourceStudy, onBack }: DashboardViewProps
                   { label: 'Matriz de Similaridade — CSV', desc: 'Pares de cards e % co-agrupamento', action: () => exportMatrixCSV(study, matrix) },
                   { label: 'Resumo do banco — CSV', desc: 'Exportação oficial salva no servidor', action: () => downloadBackendExport(sourceStudy.id, 'summary') },
                   { label: 'Sessões do banco — CSV', desc: 'Todas as respostas concluídas do estudo', action: () => downloadBackendExport(sourceStudy.id, 'sessions') },
+                  { label: 'Sessões anonimizadas — CSV', desc: 'Remove nome/e-mail e usa códigos P001, P002...', action: () => downloadBackendExport(sourceStudy.id, 'sessions-anonymized') },
                   { label: 'Matriz do banco — CSV', desc: 'Matriz recalculada no backend Java', action: () => downloadBackendExport(sourceStudy.id, 'similarity-matrix') },
                 ].map(item => (
                   <button
