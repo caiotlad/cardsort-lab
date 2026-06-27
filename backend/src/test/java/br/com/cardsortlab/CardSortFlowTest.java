@@ -105,5 +105,11 @@ class CardSortFlowTest {
         mvc.perform(get("/api/studies/" + studyId + "/exports/similarity-matrix.csv").cookie(cookie))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Início")));
+
+        mvc.perform(get("/api/studies/" + studyId + "/exports/report.md").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("_relatorio.md")))
+                .andExpect(content().string(containsString("Relatório do estudo")))
+                .andExpect(content().string(containsString("Sessões concluídas")));
     }
 }

@@ -39,8 +39,8 @@ function downloadFile(content: string, filename: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
-function downloadBackendExport(studyId: string, exportName: 'summary' | 'sessions' | 'sessions-anonymized' | 'similarity-matrix') {
-  window.location.href = `/api/studies/${encodeURIComponent(studyId)}/exports/${exportName}.csv`;
+function downloadBackendExport(studyId: string, filename: string) {
+  window.location.href = `/api/studies/${encodeURIComponent(studyId)}/exports/${filename}`;
 }
 
 function exportSessionsCSV(study: Study) {
@@ -197,10 +197,11 @@ export function DashboardView({ study: sourceStudy, onBack }: DashboardViewProps
                   { label: 'Resumo do estudo — CSV', desc: 'Indicadores gerais prontos para abrir no Excel', action: () => exportStudySummaryCSV(study) },
                   { label: 'Sessões — CSV', desc: 'Agrupamentos detalhados por participante', action: () => exportSessionsCSV(study) },
                   { label: 'Matriz de Similaridade — CSV', desc: 'Pares de cards e % co-agrupamento', action: () => exportMatrixCSV(study, matrix) },
-                  { label: 'Resumo do banco — CSV', desc: 'Exportação oficial salva no servidor', action: () => downloadBackendExport(sourceStudy.id, 'summary') },
-                  { label: 'Sessões do banco — CSV', desc: 'Todas as respostas concluídas do estudo', action: () => downloadBackendExport(sourceStudy.id, 'sessions') },
-                  { label: 'Sessões anonimizadas — CSV', desc: 'Remove nome/e-mail e usa códigos P001, P002...', action: () => downloadBackendExport(sourceStudy.id, 'sessions-anonymized') },
-                  { label: 'Matriz do banco — CSV', desc: 'Matriz recalculada no backend Java', action: () => downloadBackendExport(sourceStudy.id, 'similarity-matrix') },
+                  { label: 'Resumo do banco — CSV', desc: 'Exportação oficial salva no servidor', action: () => downloadBackendExport(sourceStudy.id, 'summary.csv') },
+                  { label: 'Sessões do banco — CSV', desc: 'Todas as respostas concluídas do estudo', action: () => downloadBackendExport(sourceStudy.id, 'sessions.csv') },
+                  { label: 'Sessões anonimizadas — CSV', desc: 'Remove nome/e-mail e usa códigos P001, P002...', action: () => downloadBackendExport(sourceStudy.id, 'sessions-anonymized.csv') },
+                  { label: 'Matriz do banco — CSV', desc: 'Matriz recalculada no backend Java', action: () => downloadBackendExport(sourceStudy.id, 'similarity-matrix.csv') },
+                  { label: 'Relatório metodológico — MD', desc: 'Resumo textual para documentação acadêmica', action: () => downloadBackendExport(sourceStudy.id, 'report.md') },
                 ].map(item => (
                   <button
                     key={item.label}

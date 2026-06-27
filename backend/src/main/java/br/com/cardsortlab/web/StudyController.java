@@ -183,6 +183,70 @@ public class StudyController {
         return csv(csv(rows), safeFileName(study.getName()) + "_matriz_similaridade.csv");
     }
 
+    @GetMapping(value = "/{id}/exports/report.md", produces = "text/markdown; charset=UTF-8")
+    @Transactional(readOnly = true)
+    public ResponseEntity<String> exportReport(@PathVariable String id, Authentication auth) {
+        var study = owned(id, auth);
+        var completed = completedSessions(study);
+        var matrix = similarityMatrix(study, completed);
+        int totalTime = completed.stream().mapToInt(s -> s.getTimeSpent() == null ? 0 : s.getTimeSpent()).sum();
+        int avgTime = completed.isEmpty() ? 0 : Math.round((float) totalTime / completed.size());
+        double agreement = agreementIndex(matrix);
+
+        var report = new StringBuilder();
+        report.append("# Relatório do estudo: ").append(study.getName()).append("\n\n");
+        report.append("Gerado automaticamente pelo CardSort Lab em ")
+                .append(EXPORT_DATE.format(java.time.Instant.now()))
+                .append(".\n\n");
+
+        report.append("## Visão geral\n\n");
+        report.append("- Tipo de card sorting: ").append(study.getType().name().toLowerCase()).append("\n");
+        report.append("- Status do estudo: ").append(study.getStatus().name().toLowerCase()).append("\n");
+        report.append("- Data de criação: ").append(EXPORT_DATE.format(study.getCreatedAt())).append("\n");
+        report.append("- Total de cards: ").append(study.getCards().size()).append("\n");
+        report.append("- Total de categorias pré-definidas: ").append(study.getCategories().size()).append("\n");
+        report.append("- Sessões concluídas: ").append(completed.size()).append("\n");
+        report.append("- Tempo médio de execução: ").append(avgTime).append(" segundos\n");
+        report.append("- Índice médio de concordância: ").append(Math.round(agreement * 100)).append("%\n\n");
+
+        report.append("## Objetivo/descrição\n\n");
+        report.append(study.getDescription()).append("\n\n");
+
+        report.append("## Instruções apresentadas ao participante\n\n");
+        report.append(study.getInstructions()).append("\n\n");
+
+        report.append("## Cards avaliados\n\n");
+        for (var card : study.getCards()) {
+            report.append("- ").append(card.getText()).append("\n");
+        }
+        report.append("\n");
+
+        if (!study.getCategories().isEmpty()) {
+            report.append("## Categorias pré-definidas\n\n");
+            for (var category : study.getCategories()) {
+                report.append("- ").append(category.getName()).append("\n");
+            }
+            report.append("\n");
+        }
+
+        report.append("## Arquivos recomendados para análise\n\n");
+        report.append("- `summary.csv`: resumo do estudo.\n");
+        report.append("- `sessions.csv`: sessões completas com dados identificáveis, útil apenas para controle interno.\n");
+        report.append("- `sessions-anonymized.csv`: respostas sem nome/e-mail, recomendado para análise e anexos acadêmicos.\n");
+        report.append("- `similarity-matrix.csv`: matriz de coagrupamento dos cards.\n\n");
+
+        report.append("## Observações éticas e de privacidade\n\n");
+        report.append("Para relatórios acadêmicos, prefira usar a exportação anonimizada. ")
+                .append("Ela substitui dados identificáveis dos participantes por códigos como `P001`, `P002` e assim por diante.\n\n");
+
+        report.append("## Próximos passos sugeridos\n\n");
+        report.append("- Revisar cards com baixa concordância entre participantes.\n");
+        report.append("- Comparar a matriz de similaridade com a arquitetura de informação pretendida.\n");
+        report.append("- Registrar contexto do teste, perfil dos participantes e limitações metodológicas.\n");
+
+        return text(report.toString(), safeFileName(study.getName()) + "_relatorio.md", "text/markdown; charset=UTF-8");
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
@@ -249,10 +313,29 @@ public class StudyController {
         return matrix;
     }
 
+    private double agreementIndex(double[][] matrix) {
+        int n = matrix.length;
+        if (n <= 1) return 1;
+        double sum = 0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                sum += matrix[i][j];
+                count++;
+            }
+        }
+        return count == 0 ? 0 : sum / count;
+    }
+
     private ResponseEntity<String> csv(String body, String filename) {
+        return text("\uFEFF" + body, filename, "text/csv; charset=UTF-8");
+    }
+
+    private ResponseEntity<String> text(String body, String filename, String contentType) {
         return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .body("\uFEFF" + body);
+                .body(body);
     }
 
     private String csv(List<List<String>> rows) {

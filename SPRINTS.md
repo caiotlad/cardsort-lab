@@ -90,3 +90,40 @@ Foco: proteger dados identificáveis dos participantes ao exportar respostas par
 
 - `npm run build` passou.
 - `backend/mvnw.cmd test -q` passou.
+
+## Sprint 3 — Relatório metodológico exportável
+
+Status: concluída  
+Início: 27/06/2026  
+Foco: facilitar a documentação dos testes para uso acadêmico.
+
+### Objetivos
+
+- Gerar um relatório textual do estudo com dados básicos e métricas.
+- Incluir observações sobre anonimização e arquivos exportáveis.
+- Disponibilizar o relatório no dashboard.
+- Cobrir o endpoint com teste automatizado.
+
+### Mudanças planejadas
+
+- Novo endpoint `/api/studies/{id}/exports/report.md`.
+- Novo item no menu de exportação do dashboard.
+- Documentação no README.
+
+### Mudanças implementadas
+
+- Adicionado relatório em Markdown com visão geral, descrição, instruções, cards, categorias e métricas básicas.
+- O relatório inclui nota de privacidade recomendando uso da exportação anonimizada em anexos/análises acadêmicas.
+- Dashboard recebeu item “Relatório metodológico — MD”.
+- README passou a documentar o novo arquivo.
+- Teste integrado valida geração do relatório.
+
+### Validação planejada
+
+- `npm run build`
+- `backend/mvnw.cmd test -q`
+
+### Validação executada
+
+- `npm run build` passou.
+- `backend/mvnw.cmd test -q` passou.
