@@ -103,34 +103,74 @@ export function StudiesView({
     }
   };
 
+  const totalParticipants = studyList.reduce((sum, study) => sum + study.sessions.length, 0);
+  const totalCards = studyList.reduce((sum, study) => sum + study.cards.length, 0);
+  const latestStudy = studyList[0];
+
   return (
     <div style={{ padding: 24, maxWidth: 1050, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
+      <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, borderRadius: 20, padding: 24, gap: 18 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', letterSpacing: '0.02em', color: '#e2e8f0', margin: 0 }}>
+          <span className="muted-pill" style={{ padding: '4px 10px', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Área do pesquisador
+          </span>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.15rem', letterSpacing: '-0.02em', color: '#e2e8f0', margin: '12px 0 0' }}>
             Meus Estudos
           </h1>
-          <p style={{ color: '#8892b0', marginTop: 4, fontSize: '0.85rem' }}>
-            {studyList.length} estudo{studyList.length !== 1 ? 's' : ''} configurado{studyList.length !== 1 ? 's' : ''}
+          <p style={{ color: '#a8b5d0', marginTop: 4, fontSize: '0.9rem', lineHeight: 1.5 }}>
+            Configure estudos, gere links para participantes e acompanhe os resultados em um só lugar.
           </p>
         </div>
         {isAdmin && (
           <button
             onClick={() => setShowCreate(true)}
-            style={{ background: '#5a7cf8', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: 500 }}
+            className="primary-gradient"
+            style={{ color: '#fff', border: 'none', borderRadius: 12, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: 700, boxShadow: '0 14px 34px rgba(90,124,248,0.24)', whiteSpace: 'nowrap' }}
           >
             <PlusCircle size={16} /> Novo Estudo
           </button>
         )}
       </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
+        {[
+          { label: 'Estudos', value: studyList.length, helper: 'configurados' },
+          { label: 'Participantes', value: totalParticipants, helper: 'sessões concluídas' },
+          { label: 'Cards', value: totalCards, helper: 'itens avaliáveis' },
+          { label: 'Último estudo', value: latestStudy ? latestStudy.name : '—', helper: latestStudy ? 'mais recente' : 'crie seu primeiro' },
+        ].map(stat => (
+          <div key={stat.label} className="soft-card" style={{ borderRadius: 16, padding: 16 }}>
+            <div style={{ color: '#8892b0', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{stat.label}</div>
+            <div style={{ color: '#e2e8f0', fontFamily: 'var(--font-display)', fontSize: typeof stat.value === 'number' ? '2rem' : '1rem', marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{stat.value}</div>
+            <div style={{ color: '#8892b0', fontSize: '0.76rem', marginTop: 2 }}>{stat.helper}</div>
+          </div>
+        ))}
+      </div>
+
+      {studyList.length === 0 && (
+        <div className="glass-panel" style={{ borderRadius: 22, padding: 34, textAlign: 'center', marginTop: 28 }}>
+          <div className="primary-gradient" style={{ width: 54, height: 54, borderRadius: 16, display: 'grid', placeItems: 'center', margin: '0 auto 16px', boxShadow: '0 16px 38px rgba(90,124,248,0.28)' }}>
+            <Layers size={24} color="#fff" />
+          </div>
+          <h2 style={{ color: '#e2e8f0', fontFamily: 'var(--font-display)', margin: 0 }}>Comece criando seu primeiro estudo</h2>
+          <p style={{ color: '#a8b5d0', maxWidth: 520, margin: '8px auto 20px', lineHeight: 1.6 }}>
+            Você define os cards, escolhe o tipo de card sorting e recebe um link para convidar participantes.
+          </p>
+          {isAdmin && (
+            <button onClick={() => setShowCreate(true)} className="primary-gradient" style={{ color: '#fff', border: 0, borderRadius: 12, padding: '12px 20px', cursor: 'pointer', fontWeight: 700 }}>
+              Criar primeiro estudo
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
         {studyList.map(study => {
           const typeInfo = TYPE_LABELS[study.type];
           return (
-            <div key={study.id} style={{ background: '#161c2d', border: '1px solid rgba(99,120,175,0.15)', borderRadius: 12, padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div key={study.id} className="soft-card hover-lift" style={{ borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
 
               {/* Title */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -203,14 +243,14 @@ export function StudiesView({
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => onExecute(study)}
-                  style={{ flex: 1, background: 'rgba(90,124,248,0.15)', color: '#5a7cf8', border: '1px solid rgba(90,124,248,0.3)', borderRadius: 7, padding: '8px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}
+                  style={{ flex: 1, background: 'rgba(90,124,248,0.15)', color: '#8ea2ff', border: '1px solid rgba(90,124,248,0.3)', borderRadius: 9, padding: '9px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700 }}
                 >
                   <Play size={13} /> Executar
                 </button>
                 {study.sessions.length > 0 && isAdmin && (
                   <button
                     onClick={() => onDashboard(study)}
-                    style={{ flex: 1, background: 'rgba(34,200,138,0.12)', color: '#22c88a', border: '1px solid rgba(34,200,138,0.25)', borderRadius: 7, padding: '8px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}
+                    style={{ flex: 1, background: 'rgba(34,200,138,0.12)', color: '#22c88a', border: '1px solid rgba(34,200,138,0.25)', borderRadius: 9, padding: '9px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700 }}
                   >
                     <BarChart2 size={13} /> Dashboard
                   </button>

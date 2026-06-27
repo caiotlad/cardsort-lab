@@ -52,25 +52,48 @@ export function LoginView({ onLogin, onRegister, onParticipantCode }: LoginViewP
   };
 
   return (
-    <div style={{
-      width: '100%', height: '100%', background: '#0d1117',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'var(--font-sans)', padding: 24, boxSizing: 'border-box',
+    <div className="app-bg auth-layout" style={{
+      width: '100%', height: '100%',
+      display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(360px, 460px)', gap: 44,
+      alignItems: 'center', justifyContent: 'center',
+      fontFamily: 'var(--font-sans)', padding: '48px min(7vw, 92px)', boxSizing: 'border-box',
     }}>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
-        <div style={{ width: 36, height: 36, background: '#5a7cf8', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <LayoutGrid size={18} color="#fff" />
+      <section className="auth-hero" style={{ maxWidth: 640 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }}>
+          <div className="primary-gradient" style={{ width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 36px rgba(90,124,248,0.32)' }}>
+            <LayoutGrid size={21} color="#fff" />
+          </div>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', color: '#e2e8f0', letterSpacing: '0.04em' }}>
+            CardSort<span style={{ color: '#5a7cf8' }}>Lab</span>
+          </span>
         </div>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', color: '#e2e8f0', letterSpacing: '0.04em' }}>
-          CardSort<span style={{ color: '#5a7cf8' }}>Lab</span>
-        </span>
-      </div>
 
-      {/* Card */}
-      <div style={{
-        background: '#161c2d', border: '1px solid rgba(99,120,175,0.18)',
-        borderRadius: 16, width: '100%', maxWidth: 420, padding: 32,
+        <span className="muted-pill" style={{ padding: '6px 12px', fontSize: '0.76rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Pesquisa de IHC com dados organizados
+        </span>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.4rem, 5vw, 4.5rem)', lineHeight: 1.02, color: '#f8fafc', margin: '20px 0 18px', letterSpacing: '-0.04em' }}>
+          Card sorting mais simples de aplicar, analisar e documentar.
+        </h1>
+        <p style={{ color: '#a8b5d0', fontSize: '1.02rem', lineHeight: 1.75, maxWidth: 560 }}>
+          Crie estudos, envie links para participantes, acompanhe respostas e exporte evidências para sua pesquisa sem perder o controle dos dados.
+        </p>
+        <div className="auth-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12, marginTop: 30 }}>
+          {[
+            ['01', 'Criar estudo', 'Cards, categorias e instruções.'],
+            ['02', 'Aplicar teste', 'Link ou código para participantes.'],
+            ['03', 'Analisar', 'Dashboard e exportações.'],
+          ].map(([num, title, desc]) => (
+            <div key={num} className="soft-card" style={{ borderRadius: 16, padding: 16 }}>
+              <div style={{ color: '#5a7cf8', fontFamily: 'var(--font-mono)', fontSize: '0.74rem' }}>{num}</div>
+              <div style={{ color: '#e2e8f0', fontWeight: 700, marginTop: 8 }}>{title}</div>
+              <div style={{ color: '#8892b0', fontSize: '0.78rem', lineHeight: 1.45, marginTop: 4 }}>{desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="glass-panel" style={{
+        borderRadius: 22, width: '100%', padding: 32,
       }}>
         {/* Tabs */}
         <div style={{ display: 'flex', background: '#0d1117', borderRadius: 8, padding: 3, marginBottom: 28 }}>
@@ -80,7 +103,7 @@ export function LoginView({ onLogin, onRegister, onParticipantCode }: LoginViewP
               onClick={() => { setTab(t); setRegisterError(''); }}
               style={{
                 flex: 1, padding: '8px 0', borderRadius: 6, border: 'none',
-                background: tab === t ? '#5a7cf8' : 'transparent',
+                background: tab === t ? 'linear-gradient(135deg, #5a7cf8 0%, #7c5cff 100%)' : 'transparent',
                 color: tab === t ? '#fff' : '#8892b0',
                 cursor: 'pointer', fontWeight: tab === t ? 600 : 400, fontSize: '0.88rem',
                 transition: 'all 0.2s',
@@ -224,10 +247,10 @@ export function LoginView({ onLogin, onRegister, onParticipantCode }: LoginViewP
         )}
       </div>
 
-      <p style={{ color: '#8892b0', fontSize: '0.72rem', marginTop: 20, textAlign: 'center', maxWidth: 340, lineHeight: 1.5 }}>
-        Ao continuar, você concorda com os termos de uso e política de privacidade do CardSortLab.
-      </p>
-    </div>
+        <p style={{ color: '#8892b0', fontSize: '0.72rem', marginTop: 20, textAlign: 'center', lineHeight: 1.5 }}>
+          Ao continuar, você concorda com os termos de uso e política de privacidade do CardSortLab.
+        </p>
+      </div>
   );
 }
 
@@ -242,7 +265,7 @@ function RoleButton({ icon, label, sublabel, selected, onClick, activeColor }: {
       style={{
         flex: 1, padding: '10px 12px', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
         border: `1.5px solid ${selected ? activeColor : 'rgba(99,120,175,0.2)'}`,
-        background: selected ? `${activeColor}18` : 'transparent',
+        background: selected ? `linear-gradient(135deg, ${activeColor}18, rgba(124,92,255,0.08))` : 'transparent',
         transition: 'all 0.2s',
       }}
     >
@@ -298,9 +321,9 @@ function ErrorNotice({ message }: { message: string }) {
 }
 
 const submitBtn: React.CSSProperties = {
-  background: '#5a7cf8', color: '#fff', border: 'none',
+  background: 'linear-gradient(135deg, #5a7cf8 0%, #7c5cff 100%)', color: '#fff', border: 'none',
   borderRadius: 8, padding: '11px 0', cursor: 'pointer',
   fontWeight: 600, fontSize: '0.9rem', display: 'flex',
   alignItems: 'center', justifyContent: 'center', gap: 6,
-  marginTop: 4, transition: 'opacity 0.2s',
+  marginTop: 4, transition: 'opacity 0.2s', boxShadow: '0 14px 34px rgba(90,124,248,0.24)',
 };

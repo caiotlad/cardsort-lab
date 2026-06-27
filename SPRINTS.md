@@ -127,3 +127,46 @@ Foco: facilitar a documentação dos testes para uso acadêmico.
 
 - `npm run build` passou.
 - `backend/mvnw.cmd test -q` passou.
+
+## Sprint 4 — Polimento de UI/UX e design
+
+Status: em andamento  
+Início: 27/06/2026  
+Foco: reduzir sensação de protótipo e deixar a experiência mais clara para pesquisadores e participantes.
+
+### Objetivos
+
+- Criar uma identidade visual mais consistente.
+- Melhorar primeira impressão da tela de login e entrada por código.
+- Melhorar navegação e clareza do painel de estudos.
+- Melhorar a tela de execução para orientar melhor o participante.
+- Manter o produto simples e estável, sem reescrever a aplicação.
+
+### Mudanças planejadas
+
+- Adicionar utilitários visuais globais para cards, botões, superfícies e fundos.
+- Reorganizar o login em uma tela com proposta de valor e painel de acesso.
+- Melhorar estados vazios e resumo no painel de estudos.
+- Dar mais destaque ao progresso da atividade de card sorting.
+
+### Mudanças implementadas
+
+- Criados estilos globais para fundo com gradientes, painéis com efeito glass, cartões suaves, hover e foco acessível.
+- AppShell recebeu navegação mais refinada, com blur, logo em gradiente e chip de sessão de participante.
+- Tela de login foi redesenhada em duas colunas: proposta de valor à esquerda e painel de acesso à direita.
+- Login ganhou cards explicativos do fluxo: criar estudo, aplicar teste e analisar.
+- Painel de estudos ganhou cabeçalho mais claro, resumo de métricas e estado vazio com chamada para criar o primeiro estudo.
+- Cards de estudo receberam visual mais polido e microinterações de hover.
+- Tela de execução ganhou barra de progresso, visual de cards mais refinado e zonas de drop mais claras.
+- Tela de conclusão do participante recebeu acabamento visual mais consistente.
+
+### Validação planejada
+
+- `npm run build`
+- `backend/mvnw.cmd test -q`
+
+### Validação executada
+
+- `npm run build` passou.
+- `backend/mvnw.cmd test -q` passou.
+- Foi feita revisão manual de boas práticas React após alterações em múltiplos componentes TSX.

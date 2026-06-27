@@ -21,17 +21,18 @@ function DraggableCard({ card, small }: DraggableCardProps) {
   return (
     <div
       ref={drag as unknown as React.LegacyRef<HTMLDivElement>}
+      className="hover-lift"
       style={{
-        background: isDragging ? 'rgba(90,124,248,0.25)' : '#1e2a42',
+        background: isDragging ? 'rgba(90,124,248,0.25)' : 'linear-gradient(180deg, rgba(30,42,66,0.96), rgba(21,31,51,0.96))',
         border: `1px solid ${isDragging ? '#5a7cf8' : 'rgba(99,120,175,0.25)'}`,
-        borderRadius: 8,
+        borderRadius: 10,
         padding: small ? '7px 12px' : '10px 14px',
         cursor: 'grab',
         opacity: isDragging ? 0.5 : 1,
         color: '#e2e8f0',
         fontSize: small ? '0.8rem' : '0.875rem',
         userSelect: 'none',
-        transition: 'border-color 0.15s, background 0.15s',
+        transition: 'border-color 0.15s, background 0.15s, transform 0.15s',
         display: 'flex',
         alignItems: 'center',
         gap: 8,
@@ -66,10 +67,11 @@ function CategoryZone({ category, cards, onDrop, onRemoveCard, onRename, onDelet
   return (
     <div
       ref={drop as unknown as React.LegacyRef<HTMLDivElement>}
+      className="soft-card"
       style={{
-        background: isOver ? 'rgba(90,124,248,0.08)' : '#161c2d',
+        background: isOver ? 'rgba(90,124,248,0.10)' : undefined,
         border: `1.5px solid ${isOver ? category.color : 'rgba(99,120,175,0.18)'}`,
-        borderRadius: 10,
+        borderRadius: 14,
         minHeight: 120,
         transition: 'border-color 0.15s, background 0.15s',
         display: 'flex',
@@ -112,7 +114,7 @@ function CategoryZone({ category, cards, onDrop, onRemoveCard, onRename, onDelet
       <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 6, flex: 1, minHeight: 60 }}>
         {cards.length === 0 && (
           <div style={{ color: '#8892b0', fontSize: '0.75rem', textAlign: 'center', padding: '12px 0', opacity: 0.6 }}>
-            Arraste cartões aqui
+            Solte cartões aqui
           </div>
         )}
         {cards.map(card => (
@@ -262,6 +264,8 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
   };
 
   const allPlaced = unassignedCards.length === 0;
+  const placedCount = study.cards.length - unassignedCards.length;
+  const progress = study.cards.length === 0 ? 0 : Math.round((placedCount / study.cards.length) * 100);
   const showAddCategory = study.type === 'open' || study.type === 'hybrid';
 
   useEffect(() => {
@@ -286,11 +290,11 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
 
   if (step === 'done') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 20 }}>
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(34,200,138,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="app-bg" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100%', gap: 20, padding: 24 }}>
+        <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(34,200,138,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 18px 44px rgba(34,200,138,0.18)' }}>
           <CheckCircle size={32} color="#22c88a" />
         </div>
-        <h2 style={{ color: '#e2e8f0', margin: 0 }}>Sessão Concluída!</h2>
+        <h2 style={{ color: '#e2e8f0', margin: 0, fontFamily: 'var(--font-display)', fontSize: '2rem' }}>Sessão concluída!</h2>
         <p style={{ color: '#8892b0', textAlign: 'center', maxWidth: 380 }}>
           Seus dados foram registrados com sucesso. Obrigado por participar do estudo.
         </p>
@@ -314,7 +318,7 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
     <DndProvider backend={HTML5Backend}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Top Bar */}
-        <div style={{ background: '#111827', borderBottom: '1px solid rgba(99,120,175,0.15)', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+        <div style={{ background: 'rgba(17,24,39,0.88)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(148,163,184,0.14)', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {onBack && (
               <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8892b0', padding: 4, display: 'flex' }}>
@@ -322,8 +326,8 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
               </button>
             )}
             <div>
-              <div style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.95rem' }}>{study.name}</div>
-              <div style={{ color: '#8892b0', fontSize: '0.75rem' }}>Card Sorting {study.type === 'open' ? 'Aberto' : study.type === 'closed' ? 'Fechado' : 'Híbrido'}</div>
+              <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: '0.98rem' }}>{study.name}</div>
+              <div style={{ color: '#8892b0', fontSize: '0.75rem' }}>Card Sorting {study.type === 'open' ? 'Aberto' : study.type === 'closed' ? 'Fechado' : 'Híbrido'} · {progress}% concluído</div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -366,6 +370,16 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
           </div>
         </div>
 
+        <div style={{ background: 'rgba(13,17,23,0.72)', borderBottom: '1px solid rgba(148,163,184,0.10)', padding: '10px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#a8b5d0', fontSize: '0.74rem', marginBottom: 7 }}>
+            <span>Progresso da organização</span>
+            <span>{placedCount} de {study.cards.length} cartões posicionados</span>
+          </div>
+          <div style={{ height: 8, background: 'rgba(148,163,184,0.12)', borderRadius: 999, overflow: 'hidden' }}>
+            <div className={allPlaced ? 'success-gradient' : 'primary-gradient'} style={{ width: `${progress}%`, height: '100%', borderRadius: 999 }} />
+          </div>
+        </div>
+
         {/* Instructions */}
         <div style={{ background: 'rgba(90,124,248,0.07)', borderBottom: '1px solid rgba(90,124,248,0.15)', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Info size={14} color="#5a7cf8" />
@@ -388,7 +402,7 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
 
         <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           {/* Left: Unassigned Cards */}
-          <div style={{ width: 220, flexShrink: 0, background: '#111827', borderRight: '1px solid rgba(99,120,175,0.12)', padding: 14, display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
+          <div style={{ width: 240, flexShrink: 0, background: 'rgba(17,24,39,0.78)', borderRight: '1px solid rgba(99,120,175,0.12)', padding: 16, display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
             <div style={{ color: '#8892b0', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>
               Cartões ({unassignedCards.length})
             </div>
@@ -396,7 +410,7 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
               <DraggableCard key={card.id} card={card} small />
             ))}
             {unassignedCards.length === 0 && (
-              <div style={{ color: '#22c88a', fontSize: '0.8rem', textAlign: 'center', padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div className="soft-card" style={{ color: '#22c88a', fontSize: '0.8rem', textAlign: 'center', padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, borderRadius: 14 }}>
                 <CheckCircle size={20} />
                 <span>Todos organizados!</span>
               </div>
@@ -404,7 +418,7 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
           </div>
 
           {/* Right: Categories */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: 18 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
               {categories.map(cat => (
                 <CategoryZone
@@ -421,7 +435,7 @@ export function ExecutionView({ study, onBack, onComplete, onViewDashboard, sess
               {showAddCategory && (
                 <button
                   onClick={handleAddCategory}
-                  style={{ background: 'transparent', border: '1.5px dashed rgba(99,120,175,0.3)', borderRadius: 10, minHeight: 120, cursor: 'pointer', color: '#8892b0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: '0.82rem', transition: 'border-color 0.15s' }}
+                  style={{ background: 'rgba(148,163,184,0.04)', border: '1.5px dashed rgba(99,120,175,0.3)', borderRadius: 14, minHeight: 120, cursor: 'pointer', color: '#8892b0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: '0.82rem', transition: 'border-color 0.15s' }}
                 >
                   <Plus size={20} />
                   Novo Grupo

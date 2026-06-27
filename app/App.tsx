@@ -231,20 +231,20 @@ function AppShell({ authName, participant = false, onLogout, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ width: '100%', height: '100%', background: '#0d1117', display: 'flex', flexDirection: 'column', color: '#e2e8f0', fontFamily: 'var(--font-sans)' }}>
-      <nav style={{ background: '#111827', borderBottom: '1px solid rgba(99,120,175,0.15)', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 54, flexShrink: 0 }}>
+    <div className="app-bg" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', color: '#e2e8f0', fontFamily: 'var(--font-sans)' }}>
+      <nav style={{ background: 'rgba(17,24,39,0.82)', backdropFilter: 'blur(18px)', borderBottom: '1px solid rgba(148,163,184,0.14)', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 28, height: 28, background: '#5a7cf8', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="primary-gradient" style={{ width: 32, height: 32, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 28px rgba(90,124,248,0.34)' }}>
             <LayoutGrid size={14} color="#fff" />
           </div>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', letterSpacing: '0.04em' }}>
             CardSort<span style={{ color: '#5a7cf8' }}>Lab</span>
           </span>
-          {participant && <span style={{ color: '#8892b0', fontSize: '0.72rem' }}>Sessão de participante</span>}
+          {participant && <span className="muted-pill" style={{ fontSize: '0.72rem', padding: '3px 9px' }}>Sessão de participante</span>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ color: '#a8b5d0', fontSize: '0.78rem' }}>{authName}</span>
-          <button onClick={onLogout} title="Sair" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8892b0', display: 'flex' }}>
+          <button onClick={onLogout} title="Sair" style={{ background: 'rgba(148,163,184,0.08)', border: '1px solid rgba(148,163,184,0.12)', borderRadius: 8, cursor: 'pointer', color: '#8892b0', display: 'flex', padding: 7 }}>
             <LogOut size={14} />
           </button>
         </div>
@@ -261,7 +261,7 @@ function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: 
   const [loading, setLoading] = useState(false);
 
   return (
-    <div style={{ minHeight: '100%', background: '#0d1117', color: '#e2e8f0', display: 'grid', placeItems: 'center', padding: 24 }}>
+    <div className="app-bg" style={{ minHeight: '100%', color: '#e2e8f0', display: 'grid', placeItems: 'center', padding: 24 }}>
       <form
         onSubmit={async event => {
           event.preventDefault();
@@ -271,17 +271,30 @@ function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: 
           catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível iniciar.'); }
           finally { setLoading(false); }
         }}
-        style={{ width: '100%', maxWidth: 520, background: '#161c2d', border: '1px solid rgba(99,120,175,0.18)', borderRadius: 16, padding: 32 }}
+        className="glass-panel"
+        style={{ width: '100%', maxWidth: 560, borderRadius: 22, padding: 34 }}
       >
-        <span style={{ color: '#5a7cf8', fontFamily: 'var(--font-mono)', fontSize: '0.74rem', textTransform: 'uppercase' }}>Convite para participar</span>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', margin: '8px 0' }}>{study.name}</h1>
+        <span className="muted-pill" style={{ color: '#a8b5d0', fontFamily: 'var(--font-mono)', fontSize: '0.74rem', textTransform: 'uppercase', padding: '5px 10px' }}>Convite para participar</span>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.25rem', margin: '18px 0 8px', letterSpacing: '0.02em' }}>{study.name}</h1>
         <p style={{ color: '#a8b5d0', lineHeight: 1.6 }}>{study.description}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginTop: 22 }}>
+          {[
+            ['Tipo', study.type === 'open' ? 'Aberto' : study.type === 'closed' ? 'Fechado' : 'Híbrido'],
+            ['Cards', String(study.cards.length)],
+            ['Tempo', study.timerEnabled === false ? 'Livre' : 'Cronometrado'],
+          ].map(([label, value]) => (
+            <div key={label} style={{ background: 'rgba(13,17,23,0.7)', border: '1px solid rgba(148,163,184,0.12)', borderRadius: 12, padding: '10px 12px' }}>
+              <div style={{ color: '#8892b0', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</div>
+              <div style={{ color: '#e2e8f0', fontWeight: 700, marginTop: 2 }}>{value}</div>
+            </div>
+          ))}
+        </div>
         <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem', marginTop: 24 }}>Seu nome *</label>
         <input value={name} onChange={event => setName(event.target.value)} style={welcomeInput} autoFocus />
         <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem', marginTop: 14 }}>E-mail (opcional)</label>
         <input type="email" value={email} onChange={event => setEmail(event.target.value)} style={welcomeInput} />
         {error && <p role="alert" style={{ color: '#fb7185', fontSize: '0.8rem' }}>{error}</p>}
-        <button disabled={loading} style={{ width: '100%', marginTop: 20, padding: 12, border: 0, borderRadius: 8, background: '#5a7cf8', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>
+        <button disabled={loading} className="primary-gradient" style={{ width: '100%', marginTop: 20, padding: 13, border: 0, borderRadius: 10, color: '#fff', fontWeight: 700, cursor: 'pointer', boxShadow: '0 14px 34px rgba(90,124,248,0.24)' }}>
           {loading ? 'Preparando sessão…' : 'Começar atividade'}
         </button>
       </form>
@@ -300,8 +313,8 @@ function LoadingScreen() {
 
 function MessageScreen({ title, message }: { title: string; message: string }) {
   return (
-    <div style={{ height: '100%', background: '#0d1117', color: '#e2e8f0', display: 'grid', placeItems: 'center', textAlign: 'center', padding: 24 }}>
-      <div><h1 style={{ fontFamily: 'var(--font-display)' }}>{title}</h1><p style={{ color: '#8892b0' }}>{message}</p></div>
+    <div className="app-bg" style={{ height: '100%', color: '#e2e8f0', display: 'grid', placeItems: 'center', textAlign: 'center', padding: 24 }}>
+      <div className="glass-panel" style={{ borderRadius: 20, padding: 32 }}><h1 style={{ fontFamily: 'var(--font-display)' }}>{title}</h1><p style={{ color: '#8892b0' }}>{message}</p></div>
     </div>
   );
 }
