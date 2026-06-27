@@ -20,6 +20,13 @@ export interface StudyDraft {
   timerEnabled?: boolean;
 }
 
+export interface ParticipantProfile {
+  area?: string;
+  experience?: string;
+  familiarity?: string;
+  notes?: string;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`/api${path}`, {
     credentials: 'include',
@@ -54,10 +61,10 @@ export const api = {
     request<Study>(`/public/studies/${id}?token=${encodeURIComponent(token)}`),
   publicStudyByCode: (code: string) =>
     request<Study>(`/public/studies/by-code/${encodeURIComponent(code)}`),
-  startSession: (id: string, token: string, participantName: string, participantEmail?: string, code?: string) =>
+  startSession: (id: string, token: string, participantName: string, participantEmail?: string, code?: string, profile?: ParticipantProfile, consentAccepted = false) =>
     request<{ sessionId: string; study: Study; draft: unknown; startedAt: string }>(
       `/public/studies/${id}/sessions?token=${encodeURIComponent(token)}`,
-      { method: 'POST', body: JSON.stringify({ participantName, participantEmail, code }) },
+      { method: 'POST', body: JSON.stringify({ participantName, participantEmail, code, profile, consentAccepted }) },
     ),
   resumeSession: (sessionId: string, token: string, code?: string) =>
     request<{ sessionId: string; study: Study; draft: { placements?: Record<string, string>; categories?: Study['categories'] }; startedAt: string }>(

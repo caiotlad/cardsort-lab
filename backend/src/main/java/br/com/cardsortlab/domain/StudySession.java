@@ -22,6 +22,9 @@ public class StudySession {
     private String draftJson = "{}";
     @Lob
     private String groupsJson = "[]";
+    private boolean consentAccepted;
+    @Lob
+    private String profileJson = "{}";
     @Column(nullable = false)
     private Instant startedAt = Instant.now();
     private Instant completedAt;
@@ -40,6 +43,10 @@ public class StudySession {
     public void setDraftJson(String draftJson) { this.draftJson = draftJson; }
     public String getGroupsJson() { return groupsJson; }
     public void setGroupsJson(String groupsJson) { this.groupsJson = groupsJson; }
+    public boolean isConsentAccepted() { return consentAccepted; }
+    public void setConsentAccepted(boolean consentAccepted) { this.consentAccepted = consentAccepted; }
+    public String getProfileJson() { return profileJson; }
+    public void setProfileJson(String profileJson) { this.profileJson = profileJson; }
     public Instant getStartedAt() { return startedAt; }
     public Instant getCompletedAt() { return completedAt; }
     public void setCompletedAt(Instant completedAt) { this.completedAt = completedAt; }

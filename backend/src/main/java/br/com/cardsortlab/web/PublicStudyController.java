@@ -28,7 +28,8 @@ public class PublicStudyController {
         this.json = json;
     }
 
-    public record StartRequest(@NotBlank String participantName, String participantEmail, String code) {}
+    public record StartRequest(@NotBlank String participantName, String participantEmail, String code,
+                               Boolean consentAccepted, JsonNode profile) {}
     public record StartResponse(String sessionId, StudyResponse study, JsonNode draft, Instant startedAt) {}
     public record DraftRequest(JsonNode placements, JsonNode categories) {}
     public record CompleteRequest(List<GroupResponse> groups, int timeSpent) {}
@@ -60,6 +61,11 @@ public class PublicStudyController {
         session.setStudy(study);
         session.setParticipantName(request.participantName().trim());
         session.setParticipantEmail(request.participantEmail());
+        if (!Boolean.TRUE.equals(request.consentAccepted())) {
+            throw new IllegalArgumentException("Para participar, é necessário aceitar o termo de consentimento.");
+        }
+        session.setConsentAccepted(true);
+        session.setProfileJson(sanitizeProfile(request.profile()).toString());
         sessions.save(session);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new StartResponse(session.getId(), mapper.toResponse(study, !study.isDashboardPrivate()),
@@ -129,6 +135,22 @@ public class PublicStudyController {
         if (session.getStatus() != SessionStatus.IN_PROGRESS)
             throw new IllegalArgumentException("Esta sessão já foi concluída.");
         return session;
+    }
+
+    private JsonNode sanitizeProfile(JsonNode source) {
+        var profile = json.createObjectNode();
+        if (source == null || source.isNull()) return profile;
+        profile.put("area", text(source, "area", 120));
+        profile.put("experience", text(source, "experience", 80));
+        profile.put("familiarity", text(source, "familiarity", 40));
+        profile.put("notes", text(source, "notes", 300));
+        return profile;
+    }
+
+    private String text(JsonNode source, String field, int maxLength) {
+        var value = source.path(field).asText("").trim();
+        if (value.length() > maxLength) return value.substring(0, maxLength);
+        return value;
     }
 
     private void ensurePublished(Study study) {

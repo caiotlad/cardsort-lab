@@ -5,7 +5,7 @@ import { LoginView } from './components/LoginView';
 import { StudiesView } from './components/StudiesView';
 import { ExecutionView } from './components/ExecutionView';
 import { DashboardView } from './components/DashboardView';
-import { api, AuthUser, StudyDraft } from './services/api';
+import { api, AuthUser, ParticipantProfile, StudyDraft } from './services/api';
 
 type Screen = 'studies' | 'execute' | 'dashboard';
 
@@ -118,7 +118,11 @@ export default function App() {
   };
 
   const handleExecute = async (study: Study) => {
-    const started = await api.startSession(study.id, study.shareToken || '', auth?.name || 'Pesquisador');
+    const started = await api.startSession(study.id, study.shareToken || '', auth?.name || 'Pesquisador', undefined, undefined, {
+      area: 'Prévia interna',
+      experience: 'Pesquisador',
+      familiarity: 'Alta',
+    }, true);
     setParticipantSessionId(started.sessionId);
     setActiveStudy(started.study);
     setParticipantStartedAt(started.startedAt);
@@ -146,8 +150,8 @@ export default function App() {
       return (
         <ParticipantWelcome
           study={activeStudy}
-          onStart={async (name, email) => {
-            const started = await api.startSession(activeStudy.id, urlToken, name, email, urlCode);
+          onStart={async (name, email, profile, consentAccepted) => {
+            const started = await api.startSession(activeStudy.id, urlToken, name, email, urlCode, profile, consentAccepted);
             setParticipantSessionId(started.sessionId);
             setActiveStudy(started.study);
             setParticipantStartedAt(started.startedAt);
@@ -254,9 +258,11 @@ function AppShell({ authName, participant = false, onLogout, children }: {
   );
 }
 
-function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: string, email?: string) => Promise<void> }) {
+function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: string, email: string | undefined, profile: ParticipantProfile, consentAccepted: boolean) => Promise<void> }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [profile, setProfile] = useState<ParticipantProfile>({ area: '', experience: '', familiarity: '', notes: '' });
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -266,8 +272,9 @@ function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: 
         onSubmit={async event => {
           event.preventDefault();
           if (!name.trim()) { setError('Informe seu nome para começar.'); return; }
+          if (!consentAccepted) { setError('Para iniciar, é necessário aceitar o termo de consentimento.'); return; }
           setLoading(true);
-          try { await onStart(name.trim(), email.trim() || undefined); }
+          try { await onStart(name.trim(), email.trim() || undefined, profile, consentAccepted); }
           catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível iniciar.'); }
           finally { setLoading(false); }
         }}
@@ -293,8 +300,38 @@ function ParticipantWelcome({ study, onStart }: { study: Study; onStart: (name: 
         <input value={name} onChange={event => setName(event.target.value)} style={welcomeInput} autoFocus />
         <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem', marginTop: 14 }}>E-mail (opcional)</label>
         <input type="email" value={email} onChange={event => setEmail(event.target.value)} style={welcomeInput} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }}>
+          <div>
+            <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem' }}>Curso/área</label>
+            <input value={profile.area || ''} onChange={event => setProfile(previous => ({ ...previous, area: event.target.value }))} placeholder="Ex: Design, Computação..." style={welcomeInput} />
+          </div>
+          <div>
+            <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem' }}>Experiência</label>
+            <select value={profile.experience || ''} onChange={event => setProfile(previous => ({ ...previous, experience: event.target.value }))} style={welcomeInput}>
+              <option value="">Selecione</option>
+              <option>Iniciante</option>
+              <option>Intermediário</option>
+              <option>Avançado</option>
+            </select>
+          </div>
+        </div>
+        <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem', marginTop: 14 }}>Familiaridade com o tema</label>
+        <select value={profile.familiarity || ''} onChange={event => setProfile(previous => ({ ...previous, familiarity: event.target.value }))} style={welcomeInput}>
+          <option value="">Selecione</option>
+          <option>Baixa</option>
+          <option>Média</option>
+          <option>Alta</option>
+        </select>
+        <label style={{ display: 'block', color: '#8892b0', fontSize: '0.78rem', marginTop: 14 }}>Observações de perfil (opcional)</label>
+        <textarea value={profile.notes || ''} onChange={event => setProfile(previous => ({ ...previous, notes: event.target.value }))} rows={2} style={{ ...welcomeInput, resize: 'vertical' }} />
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginTop: 18, color: '#a8b5d0', fontSize: '0.78rem', lineHeight: 1.5, background: 'rgba(13,17,23,0.68)', border: '1px solid rgba(148,163,184,0.12)', borderRadius: 12, padding: 12 }}>
+          <input type="checkbox" checked={consentAccepted} onChange={event => setConsentAccepted(event.target.checked)} style={{ marginTop: 3 }} />
+          <span>
+            Li e aceito participar voluntariamente deste estudo. Entendo que minhas respostas poderão ser analisadas de forma anonimizada para fins acadêmicos.
+          </span>
+        </label>
         {error && <p role="alert" style={{ color: '#fb7185', fontSize: '0.8rem' }}>{error}</p>}
-        <button disabled={loading} className="primary-gradient" style={{ width: '100%', marginTop: 20, padding: 13, border: 0, borderRadius: 10, color: '#fff', fontWeight: 700, cursor: 'pointer', boxShadow: '0 14px 34px rgba(90,124,248,0.24)' }}>
+        <button disabled={loading || !consentAccepted} className="primary-gradient" style={{ width: '100%', marginTop: 20, padding: 13, border: 0, borderRadius: 10, color: '#fff', fontWeight: 700, cursor: consentAccepted ? 'pointer' : 'not-allowed', opacity: consentAccepted ? 1 : 0.55, boxShadow: '0 14px 34px rgba(90,124,248,0.24)' }}>
           {loading ? 'Preparando sessão…' : 'Começar atividade'}
         </button>
       </form>

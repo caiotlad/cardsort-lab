@@ -180,7 +180,7 @@ Foco: reduzir sensação de protótipo e deixar a experiência mais clara para p
 
 ## Sprint 5 — Dados demonstrativos para apresentação
 
-Status: em andamento  
+Status: concluída  
 Início: 27/06/2026  
 Foco: permitir que a conta demo mostre dashboards preenchidos sem depender de coleta real.
 
@@ -197,6 +197,45 @@ Foco: permitir que a conta demo mostre dashboards preenchidos sem depender de co
 - Foram adicionados estudos demo de e-commerce, app de saúde e portal acadêmico.
 - Cada estudo contém cards, categorias quando aplicável, links/códigos próprios e sessões concluídas fictícias.
 - README documenta os exemplos disponíveis na conta demo.
+
+### Validação planejada
+
+- `npm run build`
+- `backend/mvnw.cmd test -q`
+
+### Validação executada
+
+- `npm run build` passou.
+- `backend/mvnw.cmd test -q` passou.
+- A coluna de consentimento foi mantida compatível com bancos locais já existentes.
+## Sprint 6 — Consentimento e perfil do participante
+
+Status: em andamento  
+Início: 27/06/2026  
+Foco: melhorar rigor metodológico para uso em iniciação científica.
+
+### Objetivos
+
+- Exigir aceite de consentimento antes de iniciar uma sessão.
+- Coletar metadados simples de perfil do participante.
+- Manter esses metadados disponíveis nas exportações anonimizadas.
+- Evitar expor nome/e-mail em arquivos de análise acadêmica.
+
+### Mudanças planejadas
+
+- Novos campos persistidos na sessão: consentimento aceito e perfil em JSON.
+- Tela inicial do participante com termo simples e campos de perfil.
+- API pública de início de sessão atualizada para receber consentimento/perfil.
+- Exportação anonimizada com colunas de curso/área, experiência e familiaridade.
+
+### Mudanças implementadas
+
+- Sessões agora registram aceite de consentimento e perfil do participante.
+- A API pública bloqueia início de sessão sem consentimento aceito.
+- Tela de entrada do participante ganhou termo de consentimento e campos de perfil.
+- Exportação anonimizada inclui curso/área, experiência, familiaridade e observações de perfil.
+- Dados demonstrativos passaram a incluir perfis fictícios.
+- README documenta consentimento, perfil e exportação anonimizada enriquecida.
 
 ### Validação planejada
 

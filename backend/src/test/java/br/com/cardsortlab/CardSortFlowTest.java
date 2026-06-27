@@ -63,7 +63,19 @@ class CardSortFlowTest {
         var started = mvc.perform(post("/api/public/studies/" + studyId + "/sessions")
                         .param("token", token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"participantName\":\"Participante Teste\",\"participantEmail\":\"p@teste.local\"}"))
+                        .content("""
+                                {
+                                  "participantName":"Participante Teste",
+                                  "participantEmail":"p@teste.local",
+                                  "consentAccepted":true,
+                                  "profile":{
+                                    "area":"Design",
+                                    "experience":"Intermediário",
+                                    "familiarity":"Média",
+                                    "notes":"Participante de teste"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isCreated())
                 .andReturn();
         String sessionId = json.readTree(started.getResponse().getContentAsString()).get("sessionId").asText();
@@ -101,6 +113,8 @@ class CardSortFlowTest {
         mvc.perform(get("/api/studies/" + studyId + "/exports/sessions-anonymized.csv").cookie(cookie))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("P001")))
+                .andExpect(content().string(containsString("Design")))
+                .andExpect(content().string(containsString("Intermedi")))
                 .andExpect(content().string(not(containsString("Participante Teste"))))
                 .andExpect(content().string(not(containsString("p@teste.local"))));
 

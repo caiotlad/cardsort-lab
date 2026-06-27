@@ -5,6 +5,7 @@ import br.com.cardsortlab.repository.*;
 import br.com.cardsortlab.service.StudyMapper;
 import br.com.cardsortlab.web.StudyDtos.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
@@ -143,14 +144,19 @@ public class StudyController {
         }
 
         var rows = new ArrayList<List<String>>();
-        rows.add(List.of("Código Participante", "ID Sessão", "Data/Hora", "Tempo (s)",
-                "Nº Grupos", "Categoria", "Cards no Grupo"));
+        rows.add(List.of("Código Participante", "ID Sessão", "Área/Curso", "Experiência", "Familiaridade",
+                "Observações de perfil", "Data/Hora", "Tempo (s)", "Nº Grupos", "Categoria", "Cards no Grupo"));
         for (var session : orderedSessions) {
             var sessionGroups = groups(session);
+            var profile = profile(session);
             for (var group : sessionGroups) {
                 rows.add(List.of(
                         participantCodes.get(session.getId()),
                         session.getId(),
+                        profile.path("area").asText(""),
+                        profile.path("experience").asText(""),
+                        profile.path("familiarity").asText(""),
+                        profile.path("notes").asText(""),
                         session.getCompletedAt() == null ? "" : EXPORT_DATE.format(session.getCompletedAt()),
                         String.valueOf(session.getTimeSpent() == null ? 0 : session.getTimeSpent()),
                         String.valueOf(sessionGroups.size()),
@@ -268,6 +274,14 @@ public class StudyController {
             return json.readValue(session.getGroupsJson(), new TypeReference<>() {});
         } catch (Exception ignored) {
             return List.of();
+        }
+    }
+
+    private JsonNode profile(StudySession session) {
+        try {
+            return json.readTree(session.getProfileJson());
+        } catch (Exception ignored) {
+            return json.createObjectNode();
         }
     }
 

@@ -64,6 +64,8 @@ Esse comando valida o frontend e executa um teste integrado que cobre:
 - Criação e exclusão de estudos.
 - Card sorting aberto, fechado e híbrido.
 - Links privados com token e códigos de participação.
+- Termo simples de consentimento antes da participação.
+- Coleta de perfil do participante: curso/área, experiência, familiaridade e observações.
 - Arrastar e soltar cards.
 - Criação, renomeação e exclusão de grupos quando o tipo permite.
 - Desfazer e refazer.
@@ -91,6 +93,7 @@ Pesquisadores autenticados podem exportar dados de cada estudo pelos endpoints:
 Os arquivos usam CSV com separador `;` e codificação UTF-8 com BOM, o que facilita abrir no Excel em português do Brasil.
 
 A exportação anonimizada substitui nome e e-mail por códigos como `P001`, `P002`, etc., mantendo a organização das respostas sem expor dados pessoais dos participantes.
+Ela também inclui os metadados de perfil, como curso/área, experiência e familiaridade, para permitir análises por segmento sem identificar pessoas.
 
 O relatório `report.md` resume o estudo em Markdown, com visão geral, cards, categorias, métricas básicas e observações para documentação acadêmica.
 

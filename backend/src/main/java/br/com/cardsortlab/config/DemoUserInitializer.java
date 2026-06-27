@@ -135,6 +135,13 @@ public class DemoUserInitializer {
             session.setStudy(study);
             session.setParticipantName(DEMO_NAMES.get(i));
             session.setParticipantEmail("participante" + (i + 1) + "@exemplo.local");
+            session.setConsentAccepted(true);
+            session.setProfileJson(json.writeValueAsString(Map.of(
+                    "area", DEMO_AREAS.get(i % DEMO_AREAS.size()),
+                    "experience", DEMO_EXPERIENCE.get(i % DEMO_EXPERIENCE.size()),
+                    "familiarity", DEMO_FAMILIARITY.get(i % DEMO_FAMILIARITY.size()),
+                    "notes", "Perfil fictício para demonstração"
+            )));
             session.setStatus(SessionStatus.COMPLETED);
             session.setTimeSpent(180 + (i * 23) % 210);
             session.setCompletedAt(Instant.now().minusSeconds((long) (participantCount - i) * 86_400));
@@ -199,5 +206,17 @@ public class DemoUserInitializer {
     private static final List<String> DEMO_NAMES = List.of(
             "Ana Lima", "Bruno Carvalho", "Carla Santos", "Diego Mendes", "Elena Ferreira",
             "Fabio Alves", "Gisele Rodrigues", "Heitor Costa", "Inês Oliveira", "João Paulo"
+    );
+
+    private static final List<String> DEMO_AREAS = List.of(
+            "Design", "Sistemas de Informação", "Administração", "Ciência da Computação", "Comunicação"
+    );
+
+    private static final List<String> DEMO_EXPERIENCE = List.of(
+            "Iniciante", "Intermediário", "Avançado"
+    );
+
+    private static final List<String> DEMO_FAMILIARITY = List.of(
+            "Baixa", "Média", "Alta"
     );
 }
