@@ -157,6 +157,7 @@ Foco: reduzir sensação de protótipo e deixar a experiência mais clara para p
 - Login ganhou cards explicativos do fluxo: criar estudo, aplicar teste e analisar.
 - Painel de estudos ganhou cabeçalho mais claro, resumo de métricas e estado vazio com chamada para criar o primeiro estudo.
 - Cards de estudo receberam visual mais polido e microinterações de hover.
+- Hotfix: data de criação dos cards de estudo passou a ser exibida em formato curto `dd/mm/aaaa`, evitando vazamento do texto para fora do bloco.
 - Tela de execução ganhou barra de progresso, visual de cards mais refinado e zonas de drop mais claras.
 - Tela de conclusão do participante recebeu acabamento visual mais consistente.
 

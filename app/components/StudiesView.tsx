@@ -31,6 +31,12 @@ function buildParticipantLink(studyId: string, shareToken?: string) {
   return `${base}?study=${studyId}&role=participant&token=${encodeURIComponent(shareToken || '')}`;
 }
 
+function formatCreatedDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
 function ShareButton({ studyId, shareToken }: { studyId: string; shareToken?: string }) {
   const [copied, setCopied] = useState(false);
   const copy = () => {
@@ -207,13 +213,13 @@ export function StudiesView({
                 {[
                   { icon: <Layers size={12} />, label: 'Cards', value: study.cards.length },
                   { icon: <Users size={12} />, label: 'Participantes', value: study.sessions.length },
-                  { icon: <Calendar size={12} />, label: 'Criado', value: study.createdAt },
+                  { icon: <Calendar size={12} />, label: 'Criado', value: formatCreatedDate(study.createdAt) },
                 ].map(stat => (
-                  <div key={stat.label} style={{ background: '#0d1117', borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
-                    <div style={{ color: '#8892b0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 2, fontSize: 10 }}>
+                  <div key={stat.label} style={{ background: '#0d1117', borderRadius: 6, padding: '8px 8px', textAlign: 'center', minWidth: 0, overflow: 'hidden' }}>
+                    <div style={{ color: '#8892b0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 2, fontSize: 10, minWidth: 0 }}>
                       {stat.icon} {stat.label}
                     </div>
-                    <div style={{ color: '#e2e8f0', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500 }}>{stat.value}</div>
+                    <div title={String(stat.value)} style={{ color: '#e2e8f0', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{stat.value}</div>
                   </div>
                 ))}
               </div>
