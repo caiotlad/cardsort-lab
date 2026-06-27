@@ -1,6 +1,7 @@
 package br.com.cardsortlab;
 
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -83,5 +85,18 @@ class CardSortFlowTest {
         mvc.perform(get("/api/studies").cookie(cookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].sessions[0].participantName").value("Participante Teste"));
+
+        mvc.perform(get("/api/studies/" + studyId + "/exports/summary.csv").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("_resumo.csv")))
+                .andExpect(content().string(containsString("Sessões concluídas")));
+
+        mvc.perform(get("/api/studies/" + studyId + "/exports/sessions.csv").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Participante Teste")));
+
+        mvc.perform(get("/api/studies/" + studyId + "/exports/similarity-matrix.csv").cookie(cookie))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Início")));
     }
 }

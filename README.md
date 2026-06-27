@@ -46,7 +46,8 @@ Esse comando valida o frontend e executa um teste integrado que cobre:
 3. abertura de sessão por participante;
 4. salvamento e recuperação do rascunho;
 5. envio final;
-6. consolidação no dashboard.
+6. consolidação no dashboard;
+7. exportação dos dados do estudo.
 
 ## Funcionalidades implementadas
 
@@ -64,7 +65,24 @@ Esse comando valida o frontend e executa um teste integrado que cobre:
 - Recuperação da sessão após atualizar a página.
 - Dashboards, matriz de similaridade, dendrograma e insights.
 - Exportações CSV compatíveis com Excel.
+- Exportações oficiais pelo backend para resumo, sessões e matriz de similaridade.
 - Banco local persistente.
+
+## Exportações de dados
+
+Pesquisadores autenticados podem exportar dados de cada estudo pelos endpoints:
+
+```text
+/api/studies/{id}/exports/summary.csv
+/api/studies/{id}/exports/sessions.csv
+/api/studies/{id}/exports/similarity-matrix.csv
+```
+
+Os arquivos usam CSV com separador `;` e codificação UTF-8 com BOM, o que facilita abrir no Excel em português do Brasil.
+
+## Diário de sprints
+
+As melhorias iterativas do projeto são documentadas em [SPRINTS.md](./SPRINTS.md).
 
 ## Publicação com Docker
 

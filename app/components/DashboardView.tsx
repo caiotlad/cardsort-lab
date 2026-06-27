@@ -39,6 +39,10 @@ function downloadFile(content: string, filename: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
+function downloadBackendExport(studyId: string, exportName: 'summary' | 'sessions' | 'similarity-matrix') {
+  window.location.href = `/api/studies/${encodeURIComponent(studyId)}/exports/${exportName}.csv`;
+}
+
 function exportSessionsCSV(study: Study) {
   const rows: string[][] = [
     ['ID Sessão', 'Participante', 'Data/Hora', 'Tempo (s)', 'Nº Grupos', 'Categoria', 'Cards no Grupo'],
@@ -193,6 +197,9 @@ export function DashboardView({ study: sourceStudy, onBack }: DashboardViewProps
                   { label: 'Resumo do estudo — CSV', desc: 'Indicadores gerais prontos para abrir no Excel', action: () => exportStudySummaryCSV(study) },
                   { label: 'Sessões — CSV', desc: 'Agrupamentos detalhados por participante', action: () => exportSessionsCSV(study) },
                   { label: 'Matriz de Similaridade — CSV', desc: 'Pares de cards e % co-agrupamento', action: () => exportMatrixCSV(study, matrix) },
+                  { label: 'Resumo do banco — CSV', desc: 'Exportação oficial salva no servidor', action: () => downloadBackendExport(sourceStudy.id, 'summary') },
+                  { label: 'Sessões do banco — CSV', desc: 'Todas as respostas concluídas do estudo', action: () => downloadBackendExport(sourceStudy.id, 'sessions') },
+                  { label: 'Matriz do banco — CSV', desc: 'Matriz recalculada no backend Java', action: () => downloadBackendExport(sourceStudy.id, 'similarity-matrix') },
                 ].map(item => (
                   <button
                     key={item.label}
